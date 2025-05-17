@@ -7,9 +7,12 @@ This project provides a RESTful API for quantifying the semantic similarity betw
 
 - FastAPI-based REST API with automatic documentation (Swagger UI)
 - Pre-trained transformer model for accurate semantic similarity scoring
-- Simple and intuitive API endpoints
-- Containerized deployment with Heroku support
+- Multiple endpoints for different use cases:
+  - Single prediction
+  - Batch predictions
+  - CSV file processing
 - Comprehensive test suite
+- Easy deployment to Heroku
 
 ## Local Development Setup
 
@@ -23,7 +26,7 @@ This project provides a RESTful API for quantifying the semantic similarity betw
 
 1. **Clone the repository**
    ```bash
-   git clone <your-repo-url>
+   git clone https://github.com/Rithik224661/semantic_similarity_project.git
    cd semantic_similarity_project
    ```
 
@@ -61,27 +64,21 @@ The API will be available at `http://localhost:8000`
 
 1. **Using the interactive documentation**
    - Visit `http://localhost:8000/docs` in your browser
-   - Use the Swagger UI to test the `/predict` endpoint
+   - Use the Swagger UI to test all available endpoints
 
-2. **Using the test script**
+2. **Running tests**
    ```bash
-   python test_api.py
+   python -m pytest tests/
    ```
 
-3. **Using curl**
-   ```bash
-   curl -X 'POST' \
-     'http://localhost:8000/predict' \
-     -H 'Content-Type: application/json' \
-     -d '{"text1": "The quick brown fox jumps over the lazy dog.", "text2": "A fast brown fox leaps over a sleeping dog."}'
-   ```
+## API Endpoints
 
-## API Reference
+### 1. Single Prediction
+**Endpoint:** `POST /predict`
 
-### POST /predict
 Compute the semantic similarity between two text inputs.
 
-**Request Body:**
+**Request:**
 ```json
 {
     "text1": "First text to compare",
@@ -92,29 +89,50 @@ Compute the semantic similarity between two text inputs.
 **Response:**
 ```json
 {
-    "text1": "First text to compare",
-    "text2": "Second text to compare",
-    "similarity_score": 0.85
+    "similarity score": 0.85
 }
 ```
 
-## Running Tests
+### 2. Batch Prediction
+**Endpoint:** `POST /predict/batch`
 
-Run the test suite with pytest:
-```bash
-pytest tests/
+Compute similarity scores for multiple text pairs in a single request.
+
+**Request:**
+```json
+{
+    "data": [
+        {"text1": "First text 1", "text2": "Second text 1"},
+        {"text1": "First text 2", "text2": "Second text 2"}
+    ]
+}
 ```
 
-## Deployment to Heroku
+### 3. CSV Processing
+**Endpoint:** `POST /predict/csv`
 
-1. **Install the Heroku CLI**
-   Follow the instructions at: https://devcenter.heroku.com/articles/heroku-cli
+Process a CSV file containing text pairs and return similarity scores.
 
+**Request:**
+- Method: POST
+- Content-Type: multipart/form-data
+- Body: file (CSV file with 'text1' and 'text2' columns)
+
+## Dataset Processing
+
+To process the dataset and compute similarity scores:
+
+```bash
+python process_dataset.py docs/DataNeuron_Text_Similarity.csv --output docs/processed_output.csv
+```
 
 ## Project Structure
 
 ```
 semantic_similarity_project/
+├── docs/                    # Documentation and datasets
+│   ├── DataNeuron_Text_Similarity.csv         # Sample dataset
+│   └── processed_DataNeuron_Text_Similarity.csv  # Processed output
 ├── src/                    # Source code
 │   ├── __init__.py         # Package initialization
 │   ├── main.py             # FastAPI application
@@ -124,13 +142,16 @@ semantic_similarity_project/
 ├── .gitignore              # Git ignore file
 ├── Procfile                # Heroku process file
 ├── README.md               # This file
+├── process_dataset.py      # Script to process dataset
 ├── requirements.txt        # Python dependencies
-├── runtime.txt             # Python version for Heroku
-└── setup.sh               # Setup script
+├── run_api.py             # Script to run the API
+└── start_api.bat          # Windows batch file to start the API
 ```
 
-## License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+## Deployment to Heroku
+
+1. **Install the Heroku CLI**
+   Follow the instructions at: https://devcenter.heroku.com/articles/heroku-cli
 
 2. **Login to Heroku**
    ```bash
@@ -151,17 +172,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 5. **Your API will be live at**
    ```
-   https://your-app-name.herokuapp.com/predict
+   https://your-app-name.herokuapp.com/
    ```
 
-## Project Structure
-- `src/` - Source code for model and API
-  - `model.py` - Semantic similarity model implementation
-  - `api.py` - FastAPI application
-  - `test_model_on_data.py` - Script to test the model on sample data
-- `requirements.txt` - Python dependencies
-- `Procfile` - Heroku deployment configuration
-
-## Requirements
-- Python 3.8+
-- See `requirements.txt` for dependencies
+## License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

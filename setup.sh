@@ -1,15 +1,9 @@
 #!/bin/bash
 
-# Create necessary directories
-mkdir -p ~/.streamlit/
-
-# Set up Streamlit config (if needed)
-echo "\n[server]\nheadless = true\nport = $PORT\nenableCORS = false\n" > ~/.streamlit/config.toml
-
 # Set environment variables
 export PYTHONPATH=$PYTHONPATH:$(pwd)
 
-# Install Python dependencies if not already installed
+# Create and activate virtual environment
 if [ ! -d "venv" ]; then
     python -m venv venv
     source venv/bin/activate
@@ -18,3 +12,5 @@ if [ ! -d "venv" ]; then
 else
     source venv/bin/activate
 fi
+
+echo "Setup complete. Activate the virtual environment with 'source venv/bin/activate'"
